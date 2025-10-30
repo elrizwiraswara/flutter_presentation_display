@@ -73,10 +73,10 @@ packages:
   flutter_presentation_display:
     dependency: "direct main"
     description:
-      path: "../.."
+      path: ".."
       relative: true
     source: path
-    version: "2.0.5"
+    version: "2.0.4"
   flutter_test:
     dependency: "direct dev"
     description: flutter
