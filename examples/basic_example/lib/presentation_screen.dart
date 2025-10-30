@@ -3,21 +3,21 @@ import 'package:flutter_presentation_display/flutter_presentation_display.dart';
 
 /// UI of Presentation display
 class PresentationScreen extends StatefulWidget {
-  const PresentationScreen({Key? key}) : super(key: key);
+  const PresentationScreen({super.key});
 
   @override
-  _PresentationScreenState createState() => _PresentationScreenState();
+  PresentationScreenState createState() => PresentationScreenState();
 }
 
-class _PresentationScreenState extends State<PresentationScreen> {
-  String dataFromMain = "";
-  FlutterPresentationDisplay displayManager = FlutterPresentationDisplay();
+class PresentationScreenState extends State<PresentationScreen> {
+  final _displayManager = FlutterPresentationDisplay();
+  final _dataToTransferController = TextEditingController();
 
-  final TextEditingController _dataToTransferController = TextEditingController();
+  String dataFromMain = "";
 
   @override
   void initState() {
-    displayManager.listenDataFromMainDisplay(onDataReceived);
+    _displayManager.listenDataFromMainDisplay(onDataReceived);
     super.initState();
   }
 
@@ -65,7 +65,9 @@ class _PresentationScreenState extends State<PresentationScreen> {
           ElevatedButton(
             child: const Text('Transfer Data To Main'),
             onPressed: () async {
-              displayManager.transferDataToMain(_dataToTransferController.text);
+              await _displayManager.transferDataToMain(
+                _dataToTransferController.text,
+              );
             },
           ),
           const Divider(),

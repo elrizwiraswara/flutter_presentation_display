@@ -4,24 +4,24 @@ import 'package:flutter_presentation_display/flutter_presentation_display.dart';
 
 /// Main Screen
 class MainScreen extends StatefulWidget {
-  const MainScreen({Key? key}) : super(key: key);
+  const MainScreen({super.key});
 
   @override
-  _MainScreenState createState() => _MainScreenState();
+  MainScreenState createState() => MainScreenState();
 }
 
-class _MainScreenState extends State<MainScreen> {
-  FlutterPresentationDisplay displayManager = FlutterPresentationDisplay();
-  List<Display?> displays = [];
+class MainScreenState extends State<MainScreen> {
+  final displayManager = FlutterPresentationDisplay();
 
-  final TextEditingController _indexToShareController = TextEditingController();
-  final TextEditingController _dataToTransferController = TextEditingController();
+  final _indexToShareController = TextEditingController();
+  final _dataToTransferController = TextEditingController();
+  final _nameOfIdController = TextEditingController();
+  final _nameOfIndexController = TextEditingController();
 
-  final TextEditingController _nameOfIdController = TextEditingController();
   String _nameOfId = "";
-  final TextEditingController _nameOfIndexController = TextEditingController();
   String _nameOfIndex = "";
 
+  List<Display?> displays = [];
   dynamic dataFromPresentation;
 
   @override
@@ -78,6 +78,7 @@ class _MainScreenState extends State<MainScreen> {
             child: const Text('Get Displays'),
             onPressed: () async {
               final values = await displayManager.getDisplays();
+              
               displays.clear();
               displays.addAll(values!);
               setState(() {});
@@ -91,7 +92,11 @@ class _MainScreenState extends State<MainScreen> {
             itemBuilder: (BuildContext context, int index) {
               return SizedBox(
                 height: 50,
-                child: Center(child: Text(' ${displays[index]?.displayId} ${displays[index]?.name}')),
+                child: Center(
+                  child: Text(
+                    ' ${displays[index]?.displayId} ${displays[index]?.name}',
+                  ),
+                ),
               );
             },
           ),
@@ -122,11 +127,15 @@ class _MainScreenState extends State<MainScreen> {
             child: const Text('Show presentation'),
             onPressed: () async {
               int? displayId = int.tryParse(_indexToShareController.text);
-              if (displayId != null) {
-                for (final display in displays) {
-                  if (display?.displayId == displayId) {
-                    displayManager.showSecondaryDisplay(displayId: displayId, routerName: "presentation");
-                  }
+
+              if (displayId == null) return;
+
+              for (final display in displays) {
+                if (display?.displayId == displayId) {
+                  displayManager.showSecondaryDisplay(
+                    displayId: displayId,
+                    routerName: "presentation",
+                  );
                 }
               }
             },
@@ -158,11 +167,12 @@ class _MainScreenState extends State<MainScreen> {
             child: const Text('Hide presentation'),
             onPressed: () async {
               int? displayId = int.tryParse(_indexToShareController.text);
-              if (displayId != null) {
-                for (final display in displays) {
-                  if (display?.displayId == displayId) {
-                    displayManager.hideSecondaryDisplay(displayId: displayId);
-                  }
+
+              if (displayId == null) return;
+
+              for (final display in displays) {
+                if (display?.displayId == displayId) {
+                  displayManager.hideSecondaryDisplay(displayId: displayId);
                 }
               }
             },
@@ -212,7 +222,9 @@ class _MainScreenState extends State<MainScreen> {
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text('Data from presentation: ${dataFromPresentation ?? '-'}'),
+            child: Text(
+              'Data from presentation: ${dataFromPresentation ?? '-'}',
+            ),
           ),
           const Divider(),
         ],
@@ -241,8 +253,10 @@ class _MainScreenState extends State<MainScreen> {
             child: const Text('Name By Display Id'),
             onPressed: () async {
               int? id = int.tryParse(_nameOfIdController.text);
+
               if (id != null) {
                 final value = await displayManager.getNameByDisplayId(id);
+
                 _nameOfId = value ?? "";
                 setState(() {});
               }
@@ -279,8 +293,10 @@ class _MainScreenState extends State<MainScreen> {
             child: const Text('Name By Index'),
             onPressed: () async {
               int? index = int.tryParse(_nameOfIndexController.text);
+
               if (index != null) {
                 final value = await displayManager.getNameByIndex(index);
+
                 _nameOfIndex = value ?? "";
                 setState(() {});
               }
