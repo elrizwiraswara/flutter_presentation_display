@@ -13,6 +13,7 @@ const _transferDataToPresentation = "transferDataToPresentation";
 const _transferDataToMain = "transferDataToMain";
 
 /// Constant for Android presentation display category
+// ignore: constant_identifier_names
 const String DISPLAY_CATEGORY_PRESENTATION =
     "android.hardware.display.category.PRESENTATION";
 
@@ -58,20 +59,19 @@ class FlutterPresentationDisplay {
 
   /// Gets the name of a display by its ID, optionally filtered by category
   Future<String?> getNameByDisplayId(int displayId, {String? category}) async {
-    List<Display> displays = await getDisplays(category: category) ?? [];
+    final displays = await getDisplays(category: category) ?? [];
 
-    /// Find and return the name of the display with the specified ID
-    return displays
-        .firstWhere((element) => element.displayId == displayId)
-        .name;
+    for (final d in displays) {
+      if (d.displayId == displayId) return d.name;
+    }
+
+    return null;
   }
 
   /// Gets the name of a display by its index in the list of displays
   Future<String?> getNameByIndex(int index, {String? category}) async {
-    List<Display>? displays = await getDisplays(category: category);
-
-    /// Return the name at the specified index, or null if the index is out of range
-    return (index >= 0 && index < displays!.length)
+    final displays = await getDisplays(category: category) ?? [];
+    return (index >= 0 && index < displays.length)
         ? displays[index].name
         : null;
   }
@@ -112,7 +112,8 @@ class FlutterPresentationDisplay {
 
   /// Listens for data sent from the secondary display (presentation)
   /// Calls the provided callback function when data is received
-  void listenDataFromPresentationDisplay(Function(dynamic) onDataReceived) {
+  void listenDataFromPresentationDisplay(
+      void Function(dynamic) onDataReceived) {
     _mainDisplayMethodChannel.setMethodCallHandler((call) async {
       debugPrint('Data from Presentation Display: ${call.arguments}');
       onDataReceived(call.arguments);
@@ -121,7 +122,7 @@ class FlutterPresentationDisplay {
 
   /// Listens for data sent from the main display
   /// Calls the provided callback function when data is received
-  void listenDataFromMainDisplay(Function(dynamic) onDataReceived) {
+  void listenDataFromMainDisplay(void Function(dynamic) onDataReceived) {
     _presentationMethodChannel.setMethodCallHandler((call) async {
       debugPrint('Data from Main Display: ${call.arguments}');
       onDataReceived(call.arguments);

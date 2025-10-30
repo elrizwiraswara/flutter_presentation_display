@@ -12,7 +12,7 @@ void secondaryDisplayMain() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MySecondApp extends StatelessWidget {
-  const MySecondApp({Key? key}) : super(key: key);
+  const MySecondApp({super.key});
 
   @override
   Widget build(BuildContext context) {

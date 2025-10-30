@@ -8,53 +8,95 @@ import android.view.Display
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import io.flutter.embedding.android.FlutterView
+import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.plugin.common.MethodChannel
 
-
 class PresentationDisplay(
-        context: Context,
-        private val tag: String,
-        display: Display,
-        private val callBack: (Any?) -> Unit
+    context: Context,
+    private val tag: String,
+    display: Display,
+    private val dataCallback: (Any?) -> Unit
 ) : Presentation(context, display) {
+
+    private var flutterView: FlutterView? = null
+    private var methodChannel: MethodChannel? = null
+
+    companion object {
+        private const val TAG = "PresentationDisplay"
+        private const val CHANNEL_NAME = "main_display_channel"
+        private const val METHOD_TRANSFER_DATA = "transferDataToMain"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Create FrameLayout container
-        val flContainer = FrameLayout(context)
-        val params = FrameLayout.LayoutParams(
+        val container = FrameLayout(context).apply {
+            layoutParams = FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
-        )
-        flContainer.layoutParams = params
+            )
+        }
 
-        setContentView(flContainer)
+        setContentView(container)
 
-        // Initialize FlutterView and attach it to the FrameLayout
-        val flutterView = FlutterView(context)
-        flContainer.addView(flutterView, params)
-
-        // Retrieve FlutterEngine from cache
         val flutterEngine = FlutterEngineCache.getInstance().get(tag)
-        if (flutterEngine != null) {
-            flutterView.attachToFlutterEngine(flutterEngine)
+        if (flutterEngine == null) {
+            Log.e(TAG, "FlutterEngine not found in cache with tag: $tag")
+            return
+        }
 
-            // Set up MethodChannel communication
-            MethodChannel(
-                    flutterEngine.dartExecutor.binaryMessenger,
-                    "main_display_channel"
-            ).setMethodCallHandler { call, result ->
-                Log.i("PresentationDisplay", "Method: ${call.method}, Arguments: ${call.arguments}, Callback: $callBack")
-                if (call.method == "transferDataToMain") {
-                    callBack(call.arguments) // Invoke the callback
-                } else {
-                    result.notImplemented()
+        setupFlutterView(container, flutterEngine)
+        setupMethodChannel(flutterEngine)
+    }
+
+    private fun setupFlutterView(container: FrameLayout, flutterEngine: FlutterEngine) {
+        flutterView = FlutterView(context).apply {
+            val params = FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            container.addView(this, params)
+            attachToFlutterEngine(flutterEngine)
+        }
+    }
+
+    private fun setupMethodChannel(flutterEngine: FlutterEngine) {
+        methodChannel = MethodChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            CHANNEL_NAME
+        ).apply {
+            setMethodCallHandler { call, result ->
+                when (call.method) {
+                    METHOD_TRANSFER_DATA -> {
+                        Log.d(TAG, "Transferring data to main: ${call.arguments}")
+                        dataCallback(call.arguments)
+                        result.success(null)
+                    }
+                    else -> {
+                        Log.w(TAG, "Unhandled method: ${call.method}")
+                        result.notImplemented()
+                    }
                 }
             }
-        } else {
-            Log.e("PresentationDisplay", "Can't find the FlutterEngine with cache name $tag")
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        cleanup()
+    }
+
+    override fun dismiss() {
+        cleanup()
+        super.dismiss()
+    }
+
+    private fun cleanup() {
+        methodChannel?.setMethodCallHandler(null)
+        methodChannel = null
+        
+        flutterView?.detachFromFlutterEngine()
+        flutterView = null
     }
 }
