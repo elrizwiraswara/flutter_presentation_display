@@ -5,7 +5,7 @@ import 'package:flutter_presentation_display/flutter_presentation_display.dart';
 
 /// UI of Presentation display
 class PresentationScreen extends StatefulWidget {
-  const PresentationScreen({Key? key}) : super(key: key);
+  const PresentationScreen({super.key});
 
   @override
   _PresentationScreenState createState() => _PresentationScreenState();
