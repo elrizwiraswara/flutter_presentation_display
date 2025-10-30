@@ -1,3 +1,9 @@
+## 2.0.6
+
+* Upgraded Android Gradle Plugin from 7.5 to 8.9.1
+* Upgraded Kotlin to 2.1.0
+* Updated Java and Kotlin compatibility to version 11
+
 ## 2.0.5
 
 * Add namespace to build file
