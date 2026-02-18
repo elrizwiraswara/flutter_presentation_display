@@ -126,11 +126,12 @@ private fun listDisplays(call: MethodCall, result: MethodChannel.Result) {
 
         val filteredDisplays = displays.filter { display ->
             val flags = display.flags
-            val isSecure = (flags and android.view.Display.FLAG_SECURE) != 0
-            val isProtected = (flags and android.view.Display.FLAG_SUPPORTS_PROTECTED_BUFFERS) != 0
-            val isPresentation = (flags and android.view.Display.FLAG_PRESENTATION) != 0
+           // val isSecure = (flags and android.view.Display.FLAG_SECURE) != 0
+           // val isProtected = (flags and android.view.Display.FLAG_SUPPORTS_PROTECTED_BUFFERS) != 0
+           // val isPresentation = (flags and android.view.Display.FLAG_PRESENTATION) != 0
             
-            isSecure && isProtected && isPresentation
+            // isSecure && isProtected && isPresentation
+           (flags and android.view.Display.FLAG_PRESENTATION) != 0
         }
 
         val displayList = filteredDisplays.map { display ->
