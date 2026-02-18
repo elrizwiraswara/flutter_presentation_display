@@ -119,26 +119,35 @@ class FlutterPresentationDisplayPlugin : FlutterPlugin, ActivityAware, MethodCha
         }
     }
 
-    private fun listDisplays(call: MethodCall, result: MethodChannel.Result) {
-        try {
-            val category = call.arguments as? String
-            val displays = displayManager?.getDisplays(category) ?: emptyArray()
+private fun listDisplays(call: MethodCall, result: MethodChannel.Result) {
+    try {
+        val category = call.arguments as? String
+        val displays = displayManager?.getDisplays(category) ?: emptyArray()
+
+        val filteredDisplays = displays.filter { display ->
+            val flags = display.flags
+            val isSecure = (flags and android.view.Display.FLAG_SECURE) != 0
+            val isProtected = (flags and android.view.Display.FLAG_SUPPORTS_PROTECTED_BUFFERS) != 0
+            val isPresentation = (flags and android.view.Display.FLAG_PRESENTATION) != 0
             
-            val displayList = displays.map { display ->
-                DisplayModel(
-                    displayId = display.displayId,
-                    flags = display.flags,
-                    rotation = display.rotation,
-                    name = display.name
-                )
-            }
-            
-            result.success(Gson().toJson(displayList))
-        } catch (e: Exception) {
-            Log.e(TAG, "Error listing displays: ${e.message}", e)
-            result.error("LIST_ERROR", e.message, null)
+            isSecure && isProtected && isPresentation
         }
+
+        val displayList = filteredDisplays.map { display ->
+            DisplayModel(
+                displayId = display.displayId,
+                flags = display.flags,
+                rotation = display.rotation,
+                name = display.name
+            )
+        }
+
+        result.success(Gson().toJson(displayList))
+    } catch (e: Exception) {
+        Log.e(TAG, "Error listing displays: ${e.message}", e)
+        result.error("LIST_ERROR", e.message, null)
     }
+}
 
     private fun transferDataToPresentation(call: MethodCall, result: MethodChannel.Result) {
         try {

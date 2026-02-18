@@ -11,6 +11,8 @@ import io.flutter.embedding.android.FlutterView
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.embedding.engine.FlutterEngineCache
 import io.flutter.plugin.common.MethodChannel
+import android.view.WindowManager
+import android.os.Build
 
 class PresentationDisplay(
     context: Context,
@@ -29,6 +31,15 @@ class PresentationDisplay(
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val windowType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        } else {
+            @Suppress("DEPRECATION")
+            WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY
+        }
+        
+        window?.setType(windowType)
+        
         super.onCreate(savedInstanceState)
 
         val container = FrameLayout(context).apply {
