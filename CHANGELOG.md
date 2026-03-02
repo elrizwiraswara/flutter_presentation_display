@@ -1,3 +1,8 @@
+## 2.0.7
+
+* Added `example/README.md` with links to available example apps.
+* Updated README.md with `@pragma('vm:entry-point')` usage note for secondary display entry point.
+
 ## 2.0.6
 
 * Upgraded Android Gradle Plugin from 7.5 to 8.9.1

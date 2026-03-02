@@ -26,6 +26,23 @@ dependencies:
 import 'package:flutter_presentation_display/flutter_presentation_display.dart';
 ```
 
+### Setup Entry Points
+
+Define two entry points in your `main.dart` — one for the main display and one for the secondary display. The secondary entry point **must** be annotated with `@pragma('vm:entry-point')` to prevent the Dart tree shaker from removing it in release builds:
+
+```dart
+void main() {
+  runApp(const MyApp());
+}
+
+@pragma('vm:entry-point')
+void secondaryDisplayMain() {
+  runApp(const MySecondaryApp());
+}
+```
+
+Pass the secondary entry point name (`"secondaryDisplayMain"`) as the `routerName` when calling `showSecondaryDisplay`.
+
 ### Initialize FlutterPresentationDisplay
 Create an instance of FlutterPresentationDisplay:
 ```dart
