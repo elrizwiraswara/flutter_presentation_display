@@ -1,3 +1,8 @@
+## 2.0.8
+
+* Removed `SYSTEM_ALERT_WINDOW` permission from `AndroidManifest.xml`.
+* Cleaned up unused imports in `PresentationDisplay.kt` and `FlutterPresentationDisplayPlugin.kt`.
+
 ## 2.0.7
 
 * Added `example/README.md` with links to available example apps.
