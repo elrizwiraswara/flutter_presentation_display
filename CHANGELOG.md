@@ -1,3 +1,7 @@
+## 2.0.9
+
+* Added a `fullscreen` option to `showSecondaryDisplay`. When true, the presentation hides the system bars (status bar, navigation bar, taskbar) that the secondary display may show, so the content fills the whole screen.
+
 ## 2.0.8
 
 * Removed `SYSTEM_ALERT_WINDOW` permission from `AndroidManifest.xml`.
