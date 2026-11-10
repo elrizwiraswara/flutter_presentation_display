@@ -76,12 +76,24 @@ class FlutterPresentationDisplay {
         : null;
   }
 
-  /// Shows the secondary display (presentation) with the given display ID and router name
-  Future<bool?> showSecondaryDisplay(
-      {required int displayId, required String routerName}) async {
+  /// Shows the secondary display (presentation) with the given display ID and router name.
+  ///
+  /// When [fullscreen] is true, the presentation hides the system bars (status
+  /// bar, navigation bar, taskbar) that the secondary display may show, so the
+  /// Flutter content fills the whole screen. A swipe from the edge shows them
+  /// for a moment.
+  Future<bool?> showSecondaryDisplay({
+    required int displayId,
+    required String routerName,
+    bool fullscreen = false,
+  }) async {
     return await _presentationMethodChannel.invokeMethod<bool?>(
       _showPresentation,
-      jsonEncode({"displayId": displayId, "routerName": routerName}),
+      jsonEncode({
+        "displayId": displayId,
+        "routerName": routerName,
+        "fullscreen": fullscreen,
+      }),
     );
   }
 

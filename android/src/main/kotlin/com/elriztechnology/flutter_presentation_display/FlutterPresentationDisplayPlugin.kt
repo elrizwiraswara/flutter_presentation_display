@@ -72,6 +72,7 @@ class FlutterPresentationDisplayPlugin : FlutterPlugin, ActivityAware, MethodCha
             
             val displayId = json.getInt("displayId")
             val tag = json.getString("routerName")
+            val fullscreen = json.optBoolean("fullscreen", false)
             val display = displayManager?.getDisplay(displayId)
 
             if (display == null) {
@@ -98,7 +99,7 @@ class FlutterPresentationDisplayPlugin : FlutterPlugin, ActivityAware, MethodCha
             }
 
             flutterEngineChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, SECONDARY_VIEW_TYPE_ID)
-            presentation = PresentationDisplay(currentContext, tag, display, dataToMainCallback)
+            presentation = PresentationDisplay(currentContext, tag, display, fullscreen, dataToMainCallback)
             presentation?.show()
             
             result.success(true)

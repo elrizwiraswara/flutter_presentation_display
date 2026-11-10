@@ -73,6 +73,14 @@ bool? result = await display.showSecondaryDisplay(
   routerName: "presentation",
 );
 ```
+Pass `fullscreen: true` to hide the system bars (status bar, navigation bar, taskbar) the secondary display may show, so your content fills the whole screen:
+```dart
+bool? result = await display.showSecondaryDisplay(
+  displayId: 1,
+  routerName: "presentation",
+  fullscreen: true,
+);
+```
 Hide a secondary display using its ID:
 ```dart
 bool? result = await display.hideSecondaryDisplay(displayId: 1);
